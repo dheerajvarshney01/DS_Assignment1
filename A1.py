@@ -40,6 +40,7 @@ df['rate'] = df['rate'].apply(removeBadCharactersAndNaN)
 
 ## idea for removing rows is taken from here:
 ## https://thispointer.com/python-pandas-how-to-drop-rows-in-dataframe-by-conditions-on-column-values/
+## the line below drops records that contain the value of '-' in the rate column:
 df.drop(df[~df['rate'].isin(rating_values)].index, inplace = True)
 
 rate = df['rate']
@@ -50,3 +51,99 @@ plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.show()
 
+
+
+############### Plot frequency for the 'online_order' column: ##########################
+df = originalDf.copy(deep = True)
+online_order = df['online_order']
+
+#### get values that appear in the column:
+##values = []
+##for value in list(online_order):
+##    if value not in values:
+##        values.append(value)
+
+
+labels, counts = np.unique(online_order, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.show()
+
+
+
+############### Plot frequency for the 'book_table' column: ##########################
+df = originalDf.copy(deep = True)
+book_table = df['book_table']
+
+#### get values that appear in the column:
+##values = []
+##for value in list(book_table):
+##    if value not in values:
+##        values.append(value)
+
+labels, counts = np.unique(book_table, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.show()
+
+
+
+############### Plot frequency for the 'location' column: ##########################
+df = originalDf.copy(deep = True)
+location = df['location']
+
+#### get values that appear in the column:
+##values = []
+##nanCount = 0
+##for value in list(location):
+##    if type(value) is float and isnan(value):
+##        nanCount += 1
+##    if value not in values:
+##        values.append(value)
+
+def replaceNaNByString(val):
+    if type(val) is not str and isnan(val) == True:
+        val = 'NaN'
+    return val
+
+df['location'] = df['location'].apply(replaceNaNByString)
+
+labels, counts = np.unique(location, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+## idea how to rotate x-axes labels:
+## https://stackoverflow.com/questions/10998621/rotate-axis-text-in-python-matplotlib
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.25)
+plt.show()
+
+
+
+############### Plot frequency for the 'location' column: ##########################
+df = originalDf.copy(deep = True)
+location = df['location']
+
+#### get values that appear in the column:
+##values = []
+##nanCount = 0
+##for value in list(location):
+##    if type(value) is float and isnan(value):
+##        nanCount += 1
+##    if value not in values:
+##        values.append(value)
+
+def replaceNaNByString(val):
+    if type(val) is not str and isnan(val) == True:
+        val = 'NaN'
+    return val
+
+df['location'] = df['location'].apply(replaceNaNByString)
+
+labels, counts = np.unique(location, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+## idea how to rotate x-axes labels:
+## https://stackoverflow.com/questions/10998621/rotate-axis-text-in-python-matplotlib
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.25)
+plt.show()
