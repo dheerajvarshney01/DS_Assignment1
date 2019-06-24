@@ -123,8 +123,31 @@ plt.show()
 df = originalDf.copy(deep = True)
 votes = df['votes']
 
+## idea how to plot histogram:
+## https://stackoverflow.com/questions/33203645/how-to-plot-a-histogram-using-matplotlib-in-python-with-a-list-of-data
 plt.hist(list(votes), bins=5000)
 plt.axis([-10, 250, 0, 12000])
 plt.xlabel('Number of Restaurants')
 plt.ylabel('Number of Votes')
+plt.show()
+
+
+
+############### Plot frequency for the 'approx_cost(for two people)' column: ##########################
+df = originalDf.copy(deep = True)
+
+def removeNaN(val):
+    if type(val) is str:
+        val = val.replace(',', '')
+    elif isnan(float(val)):
+        val = '-100'
+    return int(val)
+
+df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(removeNaN)
+
+## idea how to plot histogram:
+## https://stackoverflow.com/questions/33203645/how-to-plot-a-histogram-using-matplotlib-in-python-with-a-list-of-data
+plt.hist(list(df['approx_cost(for two people)']), bins='auto')
+plt.axis([-120, 5000, 0, 8000])
+plt.xticks(rotation=90)
 plt.show()
