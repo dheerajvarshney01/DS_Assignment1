@@ -119,31 +119,12 @@ plt.show()
 
 
 
-############### Plot frequency for the 'location' column: ##########################
+############### Plot frequency for the 'votes' column: ##########################
 df = originalDf.copy(deep = True)
-location = df['location']
+votes = df['votes']
 
-#### get values that appear in the column:
-##values = []
-##nanCount = 0
-##for value in list(location):
-##    if type(value) is float and isnan(value):
-##        nanCount += 1
-##    if value not in values:
-##        values.append(value)
-
-def replaceNaNByString(val):
-    if type(val) is not str and isnan(val) == True:
-        val = 'NaN'
-    return val
-
-df['location'] = df['location'].apply(replaceNaNByString)
-
-labels, counts = np.unique(location, return_counts=True)
-plt.bar(labels, counts, align='center')
-plt.gca().set_xticks(labels)
-## idea how to rotate x-axes labels:
-## https://stackoverflow.com/questions/10998621/rotate-axis-text-in-python-matplotlib
-plt.xticks(rotation=90)
-plt.gcf().subplots_adjust(bottom=0.25)
+plt.hist(list(votes), bins=5000)
+plt.axis([-10, 250, 0, 12000])
+plt.xlabel('Number of Restaurants')
+plt.ylabel('Number of Votes')
 plt.show()
