@@ -185,3 +185,47 @@ labels, counts = np.unique(strings, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.show()
+
+
+
+############### Plot frequency for the 'menu_item' column: ##########################
+## we don't plot number of restaurants that have zero items in menu because those are
+## about 35000 and this number makes others invisible on the plot.
+df = originalDf.copy(deep = True)
+
+menuItemCounts = []
+
+menu_items = list(df['menu_item'])
+for menu_item in menu_items:
+    num_of_items = len(menu_item.split("',"))
+    if num_of_items > 1 and num_of_items < 450:
+        menuItemCounts.append(num_of_items)
+
+plt.hist(menuItemCounts, bins=450)
+##plt.axis([-10, 250, 0, 12000])
+plt.show()
+
+
+
+############### Plot frequency for the 'cuisines' column: ##########################
+
+    here we need to filter cousines manually because it contains bad data
+df = originalDf.copy(deep = True)
+
+allAppearances = {}
+
+cuisines = list(df['cuisines'])
+for cuisine in cuisines:
+    if type(cuisine) is not str and isnan(cuisine) == True:
+        cuisine = 'NaN'
+    for value in cuisine.split(","):
+        if value not in allAppearances.keys():
+            allAppearances[value] = 1
+        allAppearances[value] += 1
+
+## frewquency diagram for number of cuisines in the range [0:50]
+
+labels, counts = np.unique(cuisines, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.show()
