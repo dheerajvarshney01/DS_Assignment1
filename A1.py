@@ -151,3 +151,37 @@ plt.hist(list(df['approx_cost(for two people)']), bins='auto')
 plt.axis([-120, 5000, 0, 8000])
 plt.xticks(rotation=90)
 plt.show()
+
+
+
+############### Plot frequency for the 'listed_in(type)' column: ##########################
+df = originalDf.copy(deep = True)
+
+listed_in = df['listed_in(type)']
+labels, counts = np.unique(listed_in, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.show()
+
+
+
+############### Plot frequency for the 'reviews_list' column: ##########################
+df = originalDf.copy(deep = True)
+
+reviewsCounts = []
+
+reviews = list(df['reviews_list'])
+for review in reviews:
+     reviewsCounts.append(len(review.split(")")))
+
+## frewquency diagram for number of reviews in the range [0:50]
+
+strings = []
+for number in reviewsCounts:
+    if number <= 50:
+        strings.append(number)
+
+labels, counts = np.unique(strings, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.show()
