@@ -43,10 +43,13 @@ df['rate'] = df['rate'].apply(removeBadCharactersAndNaN)
 ## the line below drops records that contain the value of '-' in the rate column:
 df.drop(df[~df['rate'].isin(rating_values)].index, inplace = True)
 
-rate = df['rate']
+rates = df['rate']
+floatRates = []
+for rate in rates:
+    floatRates.append(float(rate[:-2]))
 ## idea for plot formating is taken from here
 ## https://stackoverflow.com/questions/23246125/how-to-center-labels-in-histogram-plot
-labels, counts = np.unique(rate, return_counts=True)
+labels, counts = np.unique(rates, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.show()
@@ -117,7 +120,7 @@ plt.xticks(rotation=90)
 plt.gcf().subplots_adjust(bottom=0.25)
 plt.show()
 
-
+## CLEAN ANA FROM THE PLOT !!!
 
 ############### Plot frequency for the 'votes' column: ##########################
 df = originalDf.copy(deep = True)
@@ -148,7 +151,7 @@ df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(remo
 ## idea how to plot histogram:
 ## https://stackoverflow.com/questions/33203645/how-to-plot-a-histogram-using-matplotlib-in-python-with-a-list-of-data
 plt.hist(list(df['approx_cost(for two people)']), bins='auto')
-plt.axis([-120, 5000, 0, 8000])
+plt.axis([-120, 4500, 0, 8000])
 plt.xticks(rotation=90)
 plt.show()
 
@@ -209,23 +212,68 @@ plt.show()
 
 ############### Plot frequency for the 'cuisines' column: ##########################
 
-    here we need to filter cousines manually because it contains bad data
+##    here we need to filter cousines manually because it contains bad data
 df = originalDf.copy(deep = True)
 
-allAppearances = {}
+
+fixedCuisines = []
 
 cuisines = list(df['cuisines'])
+
 for cuisine in cuisines:
     if type(cuisine) is not str and isnan(cuisine) == True:
         cuisine = 'NaN'
     for value in cuisine.split(","):
-        if value not in allAppearances.keys():
-            allAppearances[value] = 1
-        allAppearances[value] += 1
+        value = value.replace(" ", "")
+        fixedCuisines.append(value)
 
 ## frewquency diagram for number of cuisines in the range [0:50]
 
-labels, counts = np.unique(cuisines, return_counts=True)
+labels, counts = np.unique(fixedCuisines, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.25)
 plt.show()
+
+
+
+############### Plot frequency for the 'rest_type' column: ##########################
+df = originalDf.copy(deep = True)
+rest_type = df['rest_type']
+
+def replaceNaNByString(val):
+    if type(val) is not str and isnan(val) == True:
+        val = 'NaN'
+    return val
+
+df['rest_type'] = df['rest_type'].apply(replaceNaNByString)
+
+fixedrestaurants = []
+
+rest_type = list(df['rest_type'])
+
+for typeValue in rest_type:
+    for value in typeValue.split(","):
+        value = value.replace(" ", "")
+        fixedrestaurants.append(value)
+
+## if not splitting the string by comma:
+labels, counts = np.unique(rest_type, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.25)
+plt.show()
+
+## if splitting the string by comma:
+labels, counts = np.unique(fixedrestaurants, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.25)
+plt.show()
+
+
+
+
