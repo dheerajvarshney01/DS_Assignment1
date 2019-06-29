@@ -7,7 +7,7 @@ originalDf = pd.read_csv(r'D:\Studies\DalhousieUniversity\Summer2019\DataScience
 
 ## '7.0/5' value is used to replace 'nan' values,
 ## '6.0/5' value is used to replace 'NEW' values:
-rating_values = [ '0.1/5', '0.2/5', '0.3/5', '0.4/5', '0.5/5', '0.6/5', '0.7/5', '0.8/5', '0.9/5', '1.0/5',
+rating_values = [ '0/5','0.0/5','0.1/5', '0.2/5', '0.3/5', '0.4/5', '0.5/5', '0.6/5', '0.7/5', '0.8/5', '0.9/5', '1.0/5',
                   '1.1/5', '1.2/5', '1.3/5', '1.4/5', '1.5/5', '1.6/5', '1.7/5', '1.8/5', '1.9/5', '2.0/5',
                   '2.1/5', '2.2/5', '2.3/5', '2.4/5', '2.5/5', '2.6/5', '2.7/5', '2.8/5', '2.9/5', '3.0/5',
                   '3.1/5', '3.2/5', '3.3/5', '3.4/5', '3.5/5', '3.6/5', '3.7/5', '3.8/5', '3.9/5', '4.0/5',
@@ -19,24 +19,19 @@ import re
 pattern = re.compile(r'[^0123456789./-]')
 
 df = originalDf.copy(deep = True)
-values = {}
 
 from math import isnan
 
-def removeBadCharactersAndNaN(val):
+def replaceNaNAndNewAndRemoveWhiteSpaces(val):
     if type(val) is not str and isnan(val) == True:
         val = '7.0/5'
     if type(val) is str:
         if val.lower() == 'new':
             val = '6.0/5'
-        if val not in values.keys():
-            values[val] = 1
-        else:
-            values[val] += 1
         return pattern.sub("", val)
     return val
 
-df['rate'] = df['rate'].apply(removeBadCharactersAndNaN)
+df['rate'] = df['rate'].apply(replaceNaNAndNewAndRemoveWhiteSpaces)
 
 ## idea for removing rows is taken from here:
 ## https://thispointer.com/python-pandas-how-to-drop-rows-in-dataframe-by-conditions-on-column-values/
@@ -60,13 +55,6 @@ plt.show()
 df = originalDf.copy(deep = True)
 online_order = df['online_order']
 
-#### get values that appear in the column:
-##values = []
-##for value in list(online_order):
-##    if value not in values:
-##        values.append(value)
-
-
 labels, counts = np.unique(online_order, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
@@ -78,12 +66,6 @@ plt.show()
 df = originalDf.copy(deep = True)
 book_table = df['book_table']
 
-#### get values that appear in the column:
-##values = []
-##for value in list(book_table):
-##    if value not in values:
-##        values.append(value)
-
 labels, counts = np.unique(book_table, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
@@ -94,15 +76,6 @@ plt.show()
 ############### Plot frequency for the 'location' column: ##########################
 df = originalDf.copy(deep = True)
 location = df['location']
-
-#### get values that appear in the column:
-##values = []
-##nanCount = 0
-##for value in list(location):
-##    if type(value) is float and isnan(value):
-##        nanCount += 1
-##    if value not in values:
-##        values.append(value)
 
 def replaceNaNByString(val):
     if type(val) is not str and isnan(val) == True:
@@ -275,5 +248,86 @@ plt.gcf().subplots_adjust(bottom=0.25)
 plt.show()
 
 
+
+############### Drop duploicates: ##########################
+df = originalDf.copy(deep = True)
+df.drop_duplicates(subset =['name','address'], keep = 'first', inplace = True)
+
+
+############### Drop 'NEW' and NaN from the 'rate': ##########################
+## We are dropping 'NEW' because it means that there is no rating assigned to the restaurant.
+## We are dropping NaN because:
+## 1. Replacing with the value of the neighbourhood's average won't change the neighbourhood's average
+## 2. Replacing with the value of the dataset's average will unreasonably change the average of neighbourhood
+
+pattern = re.compile(r'[^0123456789./-]')
+
+from math import isnan
+
+def removeWhiteSpace(val):
+    return pattern.sub("", val)
+
+df.dropna(subset = ['rate'], inplace = True)
+
+df['rate'] = df['rate'].apply(removeWhiteSpace)
+
+## idea for removing rows is taken from here:
+## https://thispointer.com/python-pandas-how-to-drop-rows-in-dataframe-by-conditions-on-column-values/
+## the line below drops records that contain the value of '-' or '' in the rate column:
+df.drop(df[~df['rate'].isin(rating_values)].index, inplace = True)
+
+def convertRatingsToFloat(val):
+    return float(val[:-2])
+
+df['rate'] = df['rate'].apply(convertRatingsToFloat)
+
+## idea of grupping by column name and calculation of the mean value of other column per group is taken from here:
+## https://stackoverflow.com/questions/30482071/how-to-calculate-mean-values-grouped-on-another-column-in-pandas
+rateAverageByLocation = df.groupby('location', as_index=False)['rate'].mean()
+rateAverageByLocation.iloc[rateAverageByLocation['rate'].idxmax()]
+
+labels = list(rateAverageByLocation['location'])
+counts = list(rateAverageByLocation['rate'])
+plt.bar(labels, counts, align='center')
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.25)
+plt.gca().set_xticks(labels)
+plt.show()
+
+## What are the major characteristics of this neighborhood (e.g., type of restaurant, type of food they offer, etc).
+
+mostRatedRestaurants = df[df.location=='Lavelle Road']
+
+
+online_order = mostRatedRestaurants['online_order']
+labels, counts = np.unique(online_order, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.show()
+
+
+book_table = mostRatedRestaurants['book_table']
+labels, counts = np.unique(book_table, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.show()
+
+
+rest_type = mostRatedRestaurants['rest_type'].apply(replaceNaNByString)
+fixedrestaurants = []
+rest_type = list(rest_type)
+
+for typeValue in rest_type:
+    for value in typeValue.split(","):
+        value = value.replace(" ", "")
+        fixedrestaurants.append(value)
+
+## if splitting the string by comma:
+labels, counts = np.unique(fixedrestaurants, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.25)
+plt.show()
 
 
