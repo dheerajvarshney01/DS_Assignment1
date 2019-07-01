@@ -430,62 +430,62 @@ def plotDataForExploration(_df):
     plt.show()
 
 
-##plotDataForExploration(originalDf)
+plotDataForExploration(originalDf)
 
 df_copy_no_duplicates = originalDf.drop_duplicates(subset =['name','address'], keep = 'first')
 plotDataForExploration(df_copy_no_duplicates)
-################# 3 - preparing the dataset ##########################
-### load data:
-##df = originalDf.copy(deep = True)
-### remove duplicates:
-##df.drop_duplicates(subset =['name','address'], keep = 'first', inplace = True)
-### select columns to be used in model training:
-##df = df[['location', 'rate', 'rest_type', 'cuisines', 'approx_cost(for two people)']]
-##df['location'] = df['location'].apply(replaceNaNByString)
-##
-### 'rate' column contains the following bad data: empty cells '', NaN, and
-### whitespaces inside the rate value (for example, '3.2 /2').
-##
-##df['rate'] = df['rate'].apply(replaceNaNByString)
-##df['rate'] = df['rate'].apply(removeWhiteSpaces)
-##
-#### the line below drops records that contain the value of '-' or '' in the rate column:
-##extended_rating_values = rating_values + ['NEW', 'NaN', '']
-##df.drop(df[~df['rate'].isin(extended_rating_values)].index, inplace = True)
-##
-##df['rest_type'] = df['rest_type'].apply(replaceNaNByString)
-##
-##def splitToList(stringValue):
-##    splittedTypes = []
-##    for value in stringValue.split(","):
-##        value = value.replace(" ", "")
-##        splittedTypes.append(value)
-##    return splittedTypes
-##
-##df['rest_type'] = df['rest_type'].apply(splitToList)
-##
-##df['cuisines'] = df['cuisines'].apply(replaceNaNByString)
-##df['cuisines'] = df['cuisines'].apply(splitToList)
-##
-##df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(removeCommas)
-### TARGET value of -100.0 appears in cells where NaN appeared in original data. We remove
-### those records from the dataframe because we cannot use it not for training, nor for testing
-##df.drop(df[df['approx_cost(for two people)'] == -100.0].index, inplace = True)
-##
-##
-#### Apply "one hot encoding":
-#### https://stackoverflow.com/questions/42711861/scikit-learn-one-hot-encoding-of-column-with-list-values
-##from sklearn.preprocessing import MultiLabelBinarizer
-##mlb = MultiLabelBinarizer()
-##
-##rest_type_mlb = mlb.fit_transform(df.rest_type)
-#### List comprehension
-#### https://stackoverflow.com/questions/2050637/appending-the-same-string-to-a-list-of-strings-in-python
-##rest_type_mlb_column_names = [rest_type + '_rest_type' for rest_type in mlb.classes_]
-##cuisines_mlb = mlb.fit_transform(df['cuisines'])
-##cuisines_mlb_column_names = [cuisine + '_cuisine' for cuisine in mlb.classes_]
-##
-##encoded_df = df[['rate', 'location']] \
-##            .join(pd.DataFrame(rest_type_mlb, columns = rest_type_mlb_column_names)) \
-##            .join(pd.DataFrame(cuisines_mlb, columns = cuisines_mlb_column_names)) \
-##            .join(df['approx_cost(for two people)'])
+############### 3 - preparing the dataset ##########################
+# load data:
+df = originalDf.copy(deep = True)
+# remove duplicates:
+df.drop_duplicates(subset =['name','address'], keep = 'first', inplace = True)
+# select columns to be used in model training:
+df = df[['location', 'rate', 'rest_type', 'cuisines', 'approx_cost(for two people)']]
+df['location'] = df['location'].apply(replaceNaNByString)
+
+# 'rate' column contains the following bad data: empty cells '', NaN, and
+# whitespaces inside the rate value (for example, '3.2 /2').
+
+df['rate'] = df['rate'].apply(replaceNaNByString)
+df['rate'] = df['rate'].apply(removeWhiteSpaces)
+
+## the line below drops records that contain the value of '-' or '' in the rate column:
+extended_rating_values = rating_values + ['NEW', 'NaN', '']
+df.drop(df[~df['rate'].isin(extended_rating_values)].index, inplace = True)
+
+df['rest_type'] = df['rest_type'].apply(replaceNaNByString)
+
+def splitToList(stringValue):
+    splittedTypes = []
+    for value in stringValue.split(","):
+        value = value.replace(" ", "")
+        splittedTypes.append(value)
+    return splittedTypes
+
+df['rest_type'] = df['rest_type'].apply(splitToList)
+
+df['cuisines'] = df['cuisines'].apply(replaceNaNByString)
+df['cuisines'] = df['cuisines'].apply(splitToList)
+
+df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(removeCommas)
+# TARGET value of -100.0 appears in cells where NaN appeared in original data. We remove
+# those records from the dataframe because we cannot use it not for training, nor for testing
+df.drop(df[df['approx_cost(for two people)'] == -100.0].index, inplace = True)
+
+
+## Apply "one hot encoding":
+## https://stackoverflow.com/questions/42711861/scikit-learn-one-hot-encoding-of-column-with-list-values
+from sklearn.preprocessing import MultiLabelBinarizer
+mlb = MultiLabelBinarizer()
+
+rest_type_mlb = mlb.fit_transform(df.rest_type)
+## List comprehension
+## https://stackoverflow.com/questions/2050637/appending-the-same-string-to-a-list-of-strings-in-python
+rest_type_mlb_column_names = [rest_type + '_rest_type' for rest_type in mlb.classes_]
+cuisines_mlb = mlb.fit_transform(df['cuisines'])
+cuisines_mlb_column_names = [cuisine + '_cuisine' for cuisine in mlb.classes_]
+
+encoded_df = df[['rate', 'location']] \
+            .join(pd.DataFrame(rest_type_mlb, columns = rest_type_mlb_column_names)) \
+            .join(pd.DataFrame(cuisines_mlb, columns = cuisines_mlb_column_names)) \
+            .join(df['approx_cost(for two people)'])
