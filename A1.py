@@ -74,6 +74,7 @@ def plotDataForExploration(_df):
     ## https://stackoverflow.com/questions/23246125/how-to-center-labels-in-histogram-plot
     labels, counts = np.unique(rates, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.title('rate frequences', fontsize = 18)
     plt.xlabel('rate', fontsize = 12)
@@ -88,6 +89,7 @@ def plotDataForExploration(_df):
 
     labels, counts = np.unique(online_order, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [4, 7]
     plt.gca().set_xticks(labels)
     plt.title('online_order frequences', fontsize = 18)
     plt.xlabel('online_order', fontsize = 12)
@@ -102,6 +104,7 @@ def plotDataForExploration(_df):
 
     labels, counts = np.unique(book_table, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [4, 7]
     plt.gca().set_xticks(labels)
     plt.title('book_table frequences', fontsize = 18)
     plt.xlabel('book_table', fontsize = 12)
@@ -118,6 +121,7 @@ def plotDataForExploration(_df):
 
     labels, counts = np.unique(location, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     ## idea how to rotate x-axes labels:
     ## https://stackoverflow.com/questions/10998621/rotate-axis-text-in-python-matplotlib
@@ -137,10 +141,12 @@ def plotDataForExploration(_df):
     ## idea how to plot histogram:
     ## https://stackoverflow.com/questions/33203645/how-to-plot-a-histogram-using-matplotlib-in-python-with-a-list-of-data
     plt.hist(list(votes), bins=5000)
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.axis([-10, 250, 0, 12000])
     plt.title('votes frequences', fontsize = 18)
     plt.xlabel('number of votes', fontsize = 12)
     plt.ylabel('frequency', fontsize = 12)
+
     plt.show()
 
 
@@ -156,6 +162,7 @@ def plotDataForExploration(_df):
     ## https://stackoverflow.com/questions/33203645/how-to-plot-a-histogram-using-matplotlib-in-python-with-a-list-of-data
     plt.hist(list(df['approx_cost(for two people)']), bins='auto')
     plt.axis([-120, 4500, 0, 2000])
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.xticks(rotation=90)
     plt.title('approx_cost(for two people) frequency - histogram', fontsize = 18)
     plt.xlabel('approx_cost', fontsize = 12)
@@ -175,6 +182,7 @@ def plotDataForExploration(_df):
 
 
     plt.bar(labels, counts, align='center', width = 5)
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.xticks(fontsize=6, rotation=90)
     plt.yscale('log')
@@ -185,6 +193,7 @@ def plotDataForExploration(_df):
 
     ##labels, counts = np.unique(list(df['approx_cost(for two people)']), return_counts=True)
     plt.bar(labels, counts, align='center', width = 5)
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.xticks(fontsize=6, rotation=90)
     plt.title('approx_cost(for two people) frequency - bar chart with linear scale', fontsize = 18)
@@ -201,6 +210,7 @@ def plotDataForExploration(_df):
     listed_in = df['listed_in(type)']
     labels, counts = np.unique(listed_in, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.title('listed_in(type) frequencies', fontsize = 18)
     plt.xlabel('listed_in(type)', fontsize = 12)
@@ -227,6 +237,7 @@ def plotDataForExploration(_df):
 
     labels, counts = np.unique(strings, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.title('reviews_list frequencies', fontsize = 18)
     plt.xlabel('number of reviews', fontsize = 12)
@@ -249,7 +260,7 @@ def plotDataForExploration(_df):
             menuItemCounts.append(num_of_items)
 
     plt.hist(menuItemCounts, bins=450)
-    ##plt.axis([-10, 250, 0, 12000])
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.show()
 
 
@@ -268,6 +279,7 @@ def plotDataForExploration(_df):
     ## frewquency diagram for number of cuisines in the range [0:50]
     labels, counts = np.unique(cuisinesList, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.xticks(rotation=90)
     plt.gcf().subplots_adjust(bottom=0.27)
@@ -298,6 +310,7 @@ def plotDataForExploration(_df):
     ## if not splitting the string by comma:
     labels, counts = np.unique(rest_type, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.xticks(rotation=90)
     plt.gcf().subplots_adjust(bottom=0.27)
@@ -309,6 +322,7 @@ def plotDataForExploration(_df):
     ## if splitting the string by comma:
     labels, counts = np.unique(fixedrestaurants, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.xticks(rotation=90)
     plt.gcf().subplots_adjust(bottom=0.27)
@@ -352,6 +366,7 @@ def plotDataForExploration(_df):
     labels = list(rateAverageByLocation['location'])
     counts = list(rateAverageByLocation['rate'])
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.xticks(rotation=90)
     plt.gcf().subplots_adjust(bottom=0.27)
     plt.gca().set_xticks(labels)
@@ -368,6 +383,7 @@ def plotDataForExploration(_df):
     online_order = mostRatedRestaurants['online_order']
     labels, counts = np.unique(online_order, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [4, 7]
     plt.gca().set_xticks(labels)
     plt.title('online_order frequencies for the neighbourhood with highest rate)', fontsize = 18)
     plt.xlabel('online_order', fontsize = 12)
@@ -378,6 +394,7 @@ def plotDataForExploration(_df):
     book_table = mostRatedRestaurants['book_table']
     labels, counts = np.unique(book_table, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [4, 7]
     plt.gca().set_xticks(labels)
     plt.title('book_table frequencies for the neighbourhood with highest rate)', fontsize = 18)
     plt.xlabel('online_order', fontsize = 12)
@@ -397,6 +414,7 @@ def plotDataForExploration(_df):
     ## if splitting the string by comma:
     labels, counts = np.unique(fixedrestaurants, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.xticks(rotation=90)
     plt.gcf().subplots_adjust(bottom=0.27)
@@ -421,6 +439,7 @@ def plotDataForExploration(_df):
 
     labels, counts = np.unique(fixedCuisines, return_counts=True)
     plt.bar(labels, counts, align='center')
+    plt.rcParams['figure.figsize'] = [17, 7]
     plt.gca().set_xticks(labels)
     plt.xticks(rotation=90)
     plt.gcf().subplots_adjust(bottom=0.27)
@@ -431,7 +450,7 @@ def plotDataForExploration(_df):
 
 
 plotDataForExploration(originalDf)
-
+print(500*'*')
 df_copy_no_duplicates = originalDf.drop_duplicates(subset =['name','address'], keep = 'first')
 plotDataForExploration(df_copy_no_duplicates)
 ############### 3 - preparing the dataset ##########################
