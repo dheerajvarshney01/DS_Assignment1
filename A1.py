@@ -45,6 +45,9 @@ rates = df['rate']
 labels, counts = np.unique(rates, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
+plt.title('rate frequences', fontsize = 18)
+plt.xlabel('rate', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -56,6 +59,9 @@ online_order = df['online_order']
 labels, counts = np.unique(online_order, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
+plt.title('online_order frequences', fontsize = 18)
+plt.xlabel('online_order', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -67,6 +73,9 @@ book_table = df['book_table']
 labels, counts = np.unique(book_table, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
+plt.title('book_table frequences', fontsize = 18)
+plt.xlabel('book_table', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -88,7 +97,10 @@ plt.gca().set_xticks(labels)
 ## idea how to rotate x-axes labels:
 ## https://stackoverflow.com/questions/10998621/rotate-axis-text-in-python-matplotlib
 plt.xticks(rotation=90)
-plt.gcf().subplots_adjust(bottom=0.25)
+plt.gcf().subplots_adjust(bottom=0.27)
+plt.title('location frequences', fontsize = 18)
+plt.xlabel('location', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 ## CLEAN ANA FROM THE PLOT !!!
@@ -101,14 +113,16 @@ votes = df['votes']
 ## https://stackoverflow.com/questions/33203645/how-to-plot-a-histogram-using-matplotlib-in-python-with-a-list-of-data
 plt.hist(list(votes), bins=5000)
 plt.axis([-10, 250, 0, 12000])
-plt.xlabel('Number of Restaurants')
-plt.ylabel('Number of Votes')
+plt.title('votes frequences', fontsize = 18)
+plt.xlabel('number of votes', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
 
 ############### Plot frequency for the 'approx_cost(for two people)' column: ##########################
 df = originalDf.copy(deep = True)
+df.drop_duplicates(subset =['name','address'], keep = 'first', inplace = True)
 
 def removeCommas(val):
     if type(val) is str:
@@ -129,9 +143,43 @@ df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(repl
 ## idea how to plot histogram:
 ## https://stackoverflow.com/questions/33203645/how-to-plot-a-histogram-using-matplotlib-in-python-with-a-list-of-data
 plt.hist(list(df['approx_cost(for two people)']), bins='auto')
-plt.axis([-120, 4500, 0, 8000])
+plt.axis([-120, 4500, 0, 2000])
 plt.xticks(rotation=90)
+plt.title('approx_cost(for two people) frequency - histogram', fontsize = 18)
+plt.xlabel('approx_cost', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
+
+labels = []
+counts = []
+for i in range(0, 100, 1):
+    labels.append(i*10)
+    counts.append(0)
+
+for price in list(df['approx_cost(for two people)']):
+    index = int(price/10 - price%10)
+    if index < 100:
+        counts[index] += 1
+
+
+plt.bar(labels, counts, align='center', width = 5)
+plt.gca().set_xticks(labels)
+plt.xticks(fontsize=6, rotation=90)
+plt.yscale('log')
+plt.title('approx_cost(for two people) frequency - bar chart with logarithmic Y scale', fontsize = 18)
+plt.xlabel('approx_cost', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
+plt.show()
+
+##labels, counts = np.unique(list(df['approx_cost(for two people)']), return_counts=True)
+plt.bar(labels, counts, align='center', width = 5)
+plt.gca().set_xticks(labels)
+plt.xticks(fontsize=6, rotation=90)
+plt.title('approx_cost(for two people) frequency - bar chart with linear scale', fontsize = 18)
+plt.xlabel('approx_cost', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
+plt.show()
+
 
 
 
@@ -142,6 +190,9 @@ listed_in = df['listed_in(type)']
 labels, counts = np.unique(listed_in, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
+plt.title('listed_in(type) frequencies', fontsize = 18)
+plt.xlabel('listed_in(type)', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -165,6 +216,9 @@ for number in reviewsCounts:
 labels, counts = np.unique(strings, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
+plt.title('reviews_list frequencies', fontsize = 18)
+plt.xlabel('number of reviews', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -211,7 +265,10 @@ labels, counts = np.unique(cuisinesList, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.xticks(rotation=90)
-plt.gcf().subplots_adjust(bottom=0.25)
+plt.gcf().subplots_adjust(bottom=0.27)
+plt.title('cuisines frequencies', fontsize = 18)
+plt.xlabel('cuisine', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -238,7 +295,10 @@ labels, counts = np.unique(rest_type, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.xticks(rotation=90)
-plt.gcf().subplots_adjust(bottom=0.25)
+plt.gcf().subplots_adjust(bottom=0.27)
+plt.title('rest_type frequencies', fontsize = 18)
+plt.xlabel('rest_type', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 ## if splitting the string by comma:
@@ -246,7 +306,10 @@ labels, counts = np.unique(fixedrestaurants, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.xticks(rotation=90)
-plt.gcf().subplots_adjust(bottom=0.25)
+plt.gcf().subplots_adjust(bottom=0.27)
+plt.title('rest_type frequencies (rest_typy split by comma and evaluated separately)', fontsize = 18)
+plt.xlabel('rest_type', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -293,8 +356,11 @@ labels = list(rateAverageByLocation['location'])
 counts = list(rateAverageByLocation['rate'])
 plt.bar(labels, counts, align='center')
 plt.xticks(rotation=90)
-plt.gcf().subplots_adjust(bottom=0.25)
+plt.gcf().subplots_adjust(bottom=0.27)
 plt.gca().set_xticks(labels)
+plt.title('Rating by Neighbourhood', fontsize = 18)
+plt.xlabel('Neighbourhood', fontsize = 12)
+plt.ylabel('Rating', fontsize = 12)
 plt.show()
 
 ## What are the major characteristics of this neighborhood (e.g., type of restaurant, type of food they offer, etc).
@@ -306,6 +372,9 @@ online_order = mostRatedRestaurants['online_order']
 labels, counts = np.unique(online_order, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
+plt.title('online_order frequencies for the neighbourhood with highest rate)', fontsize = 18)
+plt.xlabel('online_order', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -313,6 +382,9 @@ book_table = mostRatedRestaurants['book_table']
 labels, counts = np.unique(book_table, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
+plt.title('book_table frequencies for the neighbourhood with highest rate)', fontsize = 18)
+plt.xlabel('online_order', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -330,7 +402,10 @@ labels, counts = np.unique(fixedrestaurants, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.xticks(rotation=90)
-plt.gcf().subplots_adjust(bottom=0.25)
+plt.gcf().subplots_adjust(bottom=0.27)
+plt.title('rest_type (splitted by comma) frequencies for the neighbourhood with highest rate)', fontsize = 18)
+plt.xlabel('rest_type', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -351,7 +426,10 @@ labels, counts = np.unique(fixedCuisines, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.xticks(rotation=90)
-plt.gcf().subplots_adjust(bottom=0.25)
+plt.gcf().subplots_adjust(bottom=0.27)
+plt.title('cuisines (splitted by comma) frequencies for the neighbourhood with highest rate)', fontsize = 18)
+plt.xlabel('cuisine', fontsize = 12)
+plt.ylabel('frequency', fontsize = 12)
 plt.show()
 
 
@@ -392,6 +470,24 @@ df['cuisines'] = df['cuisines'].apply(replaceNaNByString)
 df['cuisines'] = df['cuisines'].apply(splitToList)
 
 df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(removeCommas)
-# targe value of -100.0 appears in cells where NaN appeared in original data. We remove
+# TARGET value of -100.0 appears in cells where NaN appeared in original data. We remove
 # those records from the dataframe because we cannot use it not for training, nor for testing
 df.drop(df[df['approx_cost(for two people)'] == -100.0].index, inplace = True)
+
+
+## Apply "one hot encoding":
+## https://stackoverflow.com/questions/42711861/scikit-learn-one-hot-encoding-of-column-with-list-values
+from sklearn.preprocessing import MultiLabelBinarizer
+mlb = MultiLabelBinarizer()
+
+rest_type_mlb = mlb.fit_transform(df.rest_type)
+## List comprehension
+## https://stackoverflow.com/questions/2050637/appending-the-same-string-to-a-list-of-strings-in-python
+rest_type_mlb_column_names = [rest_type + '_rest_type' for rest_type in mlb.classes_]
+cuisines_mlb = mlb.fit_transform(df['cuisines'])
+cuisines_mlb_column_names = [cuisine + '_cuisine' for cuisine in mlb.classes_]
+
+encoded_df = df[['rate', 'location']] \
+            .join(pd.DataFrame(rest_type_mlb, columns = rest_type_mlb_column_names)) \
+            .join(pd.DataFrame(cuisines_mlb, columns = cuisines_mlb_column_names)) \
+            .join(df['approx_cost(for two people)'])
