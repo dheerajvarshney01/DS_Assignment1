@@ -7,7 +7,7 @@ originalDf = pd.read_csv(r'D:\Studies\DalhousieUniversity\Summer2019\DataScience
 
 ## '7.0/5' value is used to replace 'nan' values,
 ## '6.0/5' value is used to replace 'NEW' values:
-rating_values = [ '0/5','0.0/5','0.1/5', '0.2/5', '0.3/5', '0.4/5', '0.5/5', '0.6/5', '0.7/5', '0.8/5', '0.9/5', '1.0/5',
+rating_values = [ '0.0/5','0.0/5','0.1/5', '0.2/5', '0.3/5', '0.4/5', '0.5/5', '0.6/5', '0.7/5', '0.8/5', '0.9/5', '1.0/5',
                   '1.1/5', '1.2/5', '1.3/5', '1.4/5', '1.5/5', '1.6/5', '1.7/5', '1.8/5', '1.9/5', '2.0/5',
                   '2.1/5', '2.2/5', '2.3/5', '2.4/5', '2.5/5', '2.6/5', '2.7/5', '2.8/5', '2.9/5', '3.0/5',
                   '3.1/5', '3.2/5', '3.3/5', '3.4/5', '3.5/5', '3.6/5', '3.7/5', '3.8/5', '3.9/5', '4.0/5',
@@ -39,9 +39,7 @@ df['rate'] = df['rate'].apply(replaceNaNAndNewAndRemoveWhiteSpaces)
 df.drop(df[~df['rate'].isin(rating_values)].index, inplace = True)
 
 rates = df['rate']
-floatRates = []
-for rate in rates:
-    floatRates.append(float(rate[:-2]))
+
 ## idea for plot formating is taken from here
 ## https://stackoverflow.com/questions/23246125/how-to-center-labels-in-histogram-plot
 labels, counts = np.unique(rates, return_counts=True)
@@ -112,14 +110,21 @@ plt.show()
 ############### Plot frequency for the 'approx_cost(for two people)' column: ##########################
 df = originalDf.copy(deep = True)
 
-def removeNaN(val):
+def removeCommas(val):
     if type(val) is str:
+        # make values like 8,200 be 8200
         val = val.replace(',', '')
     elif isnan(float(val)):
         val = '-100'
-    return int(val)
+    return float(val)
 
-df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(removeNaN)
+def replaceNaNsByNegativeValue(val):
+    if isnan(float(val)):
+        val = '-100'
+    return float(val)
+
+df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(removeCommas)
+df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(replaceNaNsByNegativeValue)
 
 ## idea how to plot histogram:
 ## https://stackoverflow.com/questions/33203645/how-to-plot-a-histogram-using-matplotlib-in-python-with-a-list-of-data
@@ -184,25 +189,25 @@ plt.show()
 
 
 ############### Plot frequency for the 'cuisines' column: ##########################
-
-##    here we need to filter cousines manually because it contains bad data
 df = originalDf.copy(deep = True)
 
+cuisinesList = []
 
-fixedCuisines = []
-
-cuisines = list(df['cuisines'])
-
-for cuisine in cuisines:
-    if type(cuisine) is not str and isnan(cuisine) == True:
-        cuisine = 'NaN'
-    for value in cuisine.split(","):
+def splitToList(stringValue):
+    splittedTypes = []
+    for value in stringValue.split(","):
         value = value.replace(" ", "")
-        fixedCuisines.append(value)
+        splittedTypes.append(value)
+    return splittedTypes
+
+df['cuisines'] = df['cuisines'].apply(replaceNaNByString)
+df['cuisines'] = df['cuisines'].apply(splitToList)
+
+for cuisines in list(df['cuisines']):
+    cuisinesList += cuisines
 
 ## frewquency diagram for number of cuisines in the range [0:50]
-
-labels, counts = np.unique(fixedCuisines, return_counts=True)
+labels, counts = np.unique(cuisinesList, return_counts=True)
 plt.bar(labels, counts, align='center')
 plt.gca().set_xticks(labels)
 plt.xticks(rotation=90)
@@ -215,11 +220,6 @@ plt.show()
 df = originalDf.copy(deep = True)
 rest_type = df['rest_type']
 
-def replaceNaNByString(val):
-    if type(val) is not str and isnan(val) == True:
-        val = 'NaN'
-    return val
-
 df['rest_type'] = df['rest_type'].apply(replaceNaNByString)
 
 fixedrestaurants = []
@@ -230,6 +230,8 @@ for typeValue in rest_type:
     for value in typeValue.split(","):
         value = value.replace(" ", "")
         fixedrestaurants.append(value)
+
+df['rest_type'] = df['rest_type'].apply(splitToList)
 
 ## if not splitting the string by comma:
 labels, counts = np.unique(rest_type, return_counts=True)
@@ -249,7 +251,8 @@ plt.show()
 
 
 
-############### Drop duploicates: ##########################
+############### 2.d - What is the neighborhood with the highest average rating? ##########################
+############### Drop duplicates: ##########################
 df = originalDf.copy(deep = True)
 df.drop_duplicates(subset =['name','address'], keep = 'first', inplace = True)
 
@@ -331,3 +334,64 @@ plt.gcf().subplots_adjust(bottom=0.25)
 plt.show()
 
 
+fixedCuisines = []
+
+cuisines = list(mostRatedRestaurants['cuisines'])
+
+for cuisine in cuisines:
+    if type(cuisine) is not str and isnan(cuisine) == True:
+        cuisine = 'NaN'
+    for value in cuisine.split(","):
+        value = value.replace(" ", "")
+        fixedCuisines.append(value)
+
+## frewquency diagram for number of cuisines in the range [0:50]
+
+labels, counts = np.unique(fixedCuisines, return_counts=True)
+plt.bar(labels, counts, align='center')
+plt.gca().set_xticks(labels)
+plt.xticks(rotation=90)
+plt.gcf().subplots_adjust(bottom=0.25)
+plt.show()
+
+
+
+############### 3 - preparing the dataset ##########################
+# load data:
+df = originalDf.copy(deep = True)
+# remove duplicates:
+df.drop_duplicates(subset =['name','address'], keep = 'first', inplace = True)
+# select columns to be used in model training:
+df = df[['location', 'rate', 'rest_type', 'cuisines', 'approx_cost(for two people)']]
+df['location'] = df['location'].apply(replaceNaNByString)
+
+def removeWhiteSpaces(val):
+        return pattern.sub("", val)
+# 'rate' column contains the following bad data: empty cells '', NaN, and
+# whitespaces inside the rate value (for example, '3.2 /2').
+
+df['rate'] = df['rate'].apply(replaceNaNByString)
+df['rate'] = df['rate'].apply(removeWhiteSpaces)
+
+## the line below drops records that contain the value of '-' or '' in the rate column:
+extended_rating_values = rating_values + ['NEW', 'NaN', '']
+df.drop(df[~df['rate'].isin(extended_rating_values)].index, inplace = True)
+
+df['rest_type'] = df['rest_type'].apply(replaceNaNByString)
+
+def splitToList(stringValue):
+    splittedTypes = []
+    for value in stringValue.split(","):
+        value = value.replace(" ", "")
+        splittedTypes.append(value)
+    return splittedTypes
+
+df['rest_type'] = df['rest_type'].apply(splitToList)
+
+df['cuisines'] = df['cuisines'].apply(replaceNaNByString)
+df['cuisines'] = df['cuisines'].apply(splitToList)
+
+df['approx_cost(for two people)'] = df['approx_cost(for two people)'].apply(removeCommas)
+# targe value of -100.0 appears in cells where NaN appeared in original data. We remove
+# those records from the dataframe because we cannot use it not for training, nor for testing
+df.drop(df[df['approx_cost(for two people)'] == -100.0].index, inplace = True)
