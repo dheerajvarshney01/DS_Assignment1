@@ -55,8 +55,9 @@ rating_values = [ '0.0/5','0.0/5','0.1/5', '0.2/5', '0.3/5', '0.4/5', '0.5/5', '
                   '6.0/5', '7.0/5'
                   ]
 
-
 pattern = re.compile(r'[^0123456789./-]')
+
+
 def plotDataForExploration(_df):
     ############### Plot frequency for the 'rate' column: ##########################
     df = _df.copy(deep = True)
@@ -345,8 +346,6 @@ def plotDataForExploration(_df):
     ## 1. Replacing with the value of the neighbourhood's average won't change the neighbourhood's average
     ## 2. Replacing with the value of the dataset's average will unreasonably change the average of neighbourhood
 
-    pattern = re.compile(r'[^0123456789./-]')
-
     df.dropna(subset = ['rate'], inplace = True)
 
     df['rate'] = df['rate'].apply(removeWhiteSpaces)
@@ -453,6 +452,9 @@ plotDataForExploration(originalDf)
 print(500*'*')
 df_copy_no_duplicates = originalDf.drop_duplicates(subset =['name','address'], keep = 'first')
 plotDataForExploration(df_copy_no_duplicates)
+
+
+
 ############### 3 - preparing the dataset ##########################
 # load data:
 df = originalDf.copy(deep = True)
@@ -497,14 +499,42 @@ df.drop(df[df['approx_cost(for two people)'] == -100.0].index, inplace = True)
 from sklearn.preprocessing import MultiLabelBinarizer
 mlb = MultiLabelBinarizer()
 
-rest_type_mlb = mlb.fit_transform(df.rest_type)
+rest_type_mlb = mlb.fit_transform(df['rest_type'])
 ## List comprehension
 ## https://stackoverflow.com/questions/2050637/appending-the-same-string-to-a-list-of-strings-in-python
 rest_type_mlb_column_names = [rest_type + '_rest_type' for rest_type in mlb.classes_]
+
 cuisines_mlb = mlb.fit_transform(df['cuisines'])
 cuisines_mlb_column_names = [cuisine + '_cuisine' for cuisine in mlb.classes_]
 
-encoded_df = df[['rate', 'location']] \
+location_mlb = mlb.fit_transform(df['location'])
+location_mlb_column_names = [location + '_location' for location in mlb.classes_]
+
+rate_mlb = mlb.fit_transform(df['rate'])
+rate_mlb_column_names = [rate + '_rate' for rate in mlb.classes_]
+
+encoded_df = pd.DataFrame(df['approx_cost(for two people)'].reset_index()['approx_cost(for two people)'])\
+            .join(pd.DataFrame(rate_mlb, columns = rate_mlb_column_names)) \
+            .join(pd.DataFrame(location_mlb, columns = location_mlb_column_names)) \
             .join(pd.DataFrame(rest_type_mlb, columns = rest_type_mlb_column_names)) \
-            .join(pd.DataFrame(cuisines_mlb, columns = cuisines_mlb_column_names)) \
-            .join(df['approx_cost(for two people)'])
+            .join(pd.DataFrame(cuisines_mlb, columns = cuisines_mlb_column_names))
+
+
+for val in list(train['approx_cost(for two people)']):
+    if type(val) is not float and isnan(val) == True:
+        prubt("asd")
+# Split data into training and testing sets:
+from sklearn.model_selection import train_test_split
+train, test = train_test_split(encoded_df, test_size=0.2)
+train_x = train.drop('approx_cost(for two people)', axis=1)
+train_y = train['approx_cost(for two people)']
+
+test_x = test.drop('approx_cost(for two people)', axis=1)
+test_y = test['approx_cost(for two people)']
+
+# from here - https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html#sklearn.ensemble.RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor
+randomForestRegression = RandomForestRegressor(max_depth=10, random_state=0, n_estimators=100)
+
+randomForestRegression.fit(train_x, train_y)
+
